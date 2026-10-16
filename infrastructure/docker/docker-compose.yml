@@ -1,0 +1,19 @@
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres_docuten
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - docuten_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  docuten_data:
+
+networks:
+  backend:
