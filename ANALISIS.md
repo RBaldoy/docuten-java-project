@@ -27,6 +27,7 @@ Supuestos:
 * El orden de la lista determina el orden específico de firma
 * Cuando se crea el proceso, su estado inicial es PENDING
 * El identificador del proceso será un número autoincrementable
+* En caso de tipo de proceso paralelo, en el modelo se asignará el orden de la lista aunque no se relevante
 
 Casos límite:
 * Validación de la petición (inválida o incompleta)
@@ -44,7 +45,7 @@ Diseño:
     *   Consultar documento
     *   Verificar firma de documento
 * Se creará una entidad y un repositorio para cada una de las entidades mencionadas en el modelo de datos
-* Se crearán los mapper necesarios para transferir los datos de un objeto DTO a un objeto Entidad y viceversa
+* Se crearán los mapper necesarios para transferir los datos de un objeto DTO a un objeto Entidad y viceversa 
 * PDF: almcenar en base de datos: referencia, tamaño y HASH SHA-256
 * Almacenar el disco los documentos
 * Tipo de proceso: enum PARALLEL o SEQUENTIAL (escalable a más tipos)
@@ -75,7 +76,7 @@ Diseño:
 | size | INTEGER | Tamaño del documento |
 | creation_date | TIMESTAMP | Fecha de persistencia del documento |
 
-### Entidad: **signatories**
+### Entidad: **signatory**
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
 | id | BIGINT | PK |

@@ -40,6 +40,7 @@ public class SignatureProcess {
     @Column (nullable = false)
     private Date expirationDate;
 
+    @Column
     private Date statusUpdateDate;
 
 }
