@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
@@ -30,6 +31,9 @@ public class SignatureProcessRequest {
     @NotBlank (message = "El PDF codificado es obligatorio")
     private String encodedPDF;
 
+    @NotBlank (message = "El nombre del archivo es obligatorio")
+    private String fileName;
+
     @NotEmpty (message = "La lista de firmantes es obligatoria")
     @Valid
     private List<SignerDTO> signers;
@@ -37,6 +41,10 @@ public class SignatureProcessRequest {
     @NotNull (message = "El tipo de proceso es obligatorio")
     private ProcessTypeEnum processType;
 
+    @JsonFormat(
+    shape = JsonFormat.Shape.STRING,
+    pattern = "yyyy-MM-dd'T'HH:mm:ss"
+    )
     @NotNull (message = "La fecha de expiración es obligatoria")
     @Future (message = "La fecha de expiración debe ser futura")
     private Date expirationDate;

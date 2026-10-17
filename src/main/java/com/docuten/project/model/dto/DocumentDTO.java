@@ -2,8 +2,6 @@ package com.docuten.project.model.dto;
 
 import java.util.Date;
 
-import com.docuten.project.model.SignatureProcess;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,5 +25,5 @@ public class DocumentDTO {
     private String hash;
     private int size;
     private Date creationDate;
-    private SignatureProcess signatureProcess;
+    private SignatureProcessDTO signatureProcess;
 }

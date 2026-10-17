@@ -3,8 +3,6 @@ package com.docuten.project.model.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.docuten.project.model.Document;
-import com.docuten.project.model.Signatory;
 import com.docuten.project.model.enums.ProcessTypeEnum;
 import com.docuten.project.model.enums.SignatureProcessStatus;
 
@@ -31,6 +29,6 @@ public class SignatureProcessDTO {
     private Date creationDate;
     private Date expirationDate;
     private Date statusUpdateDate;
-    private Document document;
-    private List<Signatory> signatories;
+    private DocumentDTO document;
+    private List<SignatoryDTO> signatories;
 }
