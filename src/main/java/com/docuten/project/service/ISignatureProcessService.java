@@ -1,6 +1,6 @@
 package com.docuten.project.service;
 
-import com.docuten.project.controller.dto.SignatureProcessRequest;
+import com.docuten.project.model.dto.SignatureProcessRequest;
 
 /**
  * Service interface for handling signature process operations

@@ -1,7 +1,7 @@
-package com.docuten.project.controller.dto;
+package com.docuten.project.model.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +19,9 @@ import lombok.Setter;
 @Builder
 public class SignerDTO {
 
-    @NotNull
+    @NotBlank (message = "El nombre del firmante es obligatorio")
     private String name;
-    @Email
+   
+    @Email (message = "El correo electrónico del firmante es inválido")
     private String email;
 }

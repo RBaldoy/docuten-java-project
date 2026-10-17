@@ -1,10 +1,14 @@
-package com.docuten.project.controller.dto;
+package com.docuten.project.model.dto;
 
 import java.util.Date;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,16 +27,18 @@ import lombok.Setter;
 @Builder
 public class SignatureProcessRequest {
 
-    @NotNull
-    private String base64PDF;
+    @NotBlank (message = "El PDF codificado es obligatorio")
+    private String encodedPDF;
 
-    @NotNull
+    @NotEmpty (message = "La lista de firmantes es obligatoria")
+    @Valid
     private List<SignerDTO> signers;
 
-    @NotNull
+    @NotNull (message = "El tipo de proceso es obligatorio")
     private ProcessTypeEnum processType;
-    
-    @NotNull
+
+    @NotNull (message = "La fecha de expiración es obligatoria")
+    @Future (message = "La fecha de expiración debe ser futura")
     private Date expirationDate;
 
 }

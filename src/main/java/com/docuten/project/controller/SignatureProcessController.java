@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.docuten.project.controller.dto.SignatureProcessRequest;
+import com.docuten.project.model.dto.SignatureProcessRequest;
 import com.docuten.project.service.ISignatureProcessService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 
 /**
  * Controller for handling signature process related requests
@@ -31,7 +32,7 @@ public class SignatureProcessController {
             @ApiResponse(responseCode = "200", description = "Successfully created the signature process"),
             @ApiResponse(responseCode = "400", description = "Invalid request data")
     })
-    public ResponseEntity<Long> createSignatureProcess(@RequestBody SignatureProcessRequest request) {
+    public ResponseEntity<Long> createSignatureProcess(@Valid @RequestBody SignatureProcessRequest request) {
         Long processId = signatureProcessService.createProcess(request);
         return ResponseEntity.ok(processId);
     }
