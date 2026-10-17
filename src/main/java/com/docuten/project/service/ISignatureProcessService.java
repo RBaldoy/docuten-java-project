@@ -1,5 +1,6 @@
 package com.docuten.project.service;
 
+import com.docuten.project.exception.SignatureProcessException;
 import com.docuten.project.model.dto.SignatureProcessRequest;
 
 /**
@@ -13,6 +14,6 @@ public interface ISignatureProcessService {
      * @param request The signature process request containing necessary information
      * @return The ID of the created signature process
      */
-    Long createProcess(SignatureProcessRequest request);
+    Long createProcess(SignatureProcessRequest request)  throws SignatureProcessException;
 
 }
