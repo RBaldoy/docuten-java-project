@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.docuten.project.model.SignatureProcess;
 
+/**
+ * JPA Repository for managing SignatureProcess entities
+ */
 @Repository 
 public interface SignatureProcessRepository extends JpaRepository<SignatureProcess, Long> {
 
