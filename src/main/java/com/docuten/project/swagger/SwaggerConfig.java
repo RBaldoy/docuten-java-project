@@ -13,9 +13,9 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Procesos Firma")
+                        .title("API Signature Process")
                         .version("1.0")
-                        .description("Documentación de la API de Procesos Firma"));
+                        .description("API for managing signature processes"));
     }
     
 }
