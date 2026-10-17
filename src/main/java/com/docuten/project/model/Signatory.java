@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,4 +44,8 @@ public class Signatory {
 
     @Column (nullable = false)
     private Date creationDate;
+
+    @ManyToOne (optional = false)
+    @JoinColumn (name = "signature_process_id", referencedColumnName = "id", nullable = false)
+    private SignatureProcess signatureProcess;
 }
