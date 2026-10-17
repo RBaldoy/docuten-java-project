@@ -1,6 +1,6 @@
 package com.docuten.project.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +24,6 @@ public class DocumentDTO {
     private String storagePath;
     private String hash;
     private int size;
-    private Date creationDate;
+    private LocalDateTime creationDate;
     private SignatureProcessDTO signatureProcess;
 }

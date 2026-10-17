@@ -1,6 +1,6 @@
 package com.docuten.project.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
@@ -26,9 +26,9 @@ public class SignatureProcessDTO {
     private Long id;
     private ProcessTypeEnum processType;
     private SignatureProcessStatus status;
-    private Date creationDate;
-    private Date expirationDate;
-    private Date statusUpdateDate;
+    private LocalDateTime creationDate;
+    private LocalDateTime expirationDate;
+    private LocalDateTime statusUpdateDate;
     private DocumentDTO document;
     private List<SignatoryDTO> signatories;
 }

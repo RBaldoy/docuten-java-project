@@ -1,9 +1,13 @@
 package com.docuten.project.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.docuten.project.model.enums.SignatoryStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,14 +40,15 @@ public class Signatory {
     @Column (nullable = false)
     private int signOrder;
 
+    @Enumerated(EnumType.STRING)
     @Column (nullable = false)
-    private String signStatus;
+    private SignatoryStatus signStatus;
 
     @Column
-    private Date signDate;
+    private LocalDateTime signDate;
 
     @Column (nullable = false)
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @ManyToOne (optional = false)
     @JoinColumn (name = "signature_process_id", referencedColumnName = "id", nullable = false)

@@ -1,6 +1,6 @@
 package com.docuten.project.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +40,7 @@ public class Document {
     private int size;
 
     @Column (nullable = false)
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "signature_process_id", referencedColumnName = "id", nullable = false, unique = true)

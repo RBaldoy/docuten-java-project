@@ -1,6 +1,6 @@
 package com.docuten.project.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
@@ -47,6 +47,6 @@ public class SignatureProcessRequest {
     )
     @NotNull (message = "La fecha de expiración es obligatoria")
     @Future (message = "La fecha de expiración debe ser futura")
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
 }

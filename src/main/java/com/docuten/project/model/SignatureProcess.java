@@ -1,6 +1,6 @@
 package com.docuten.project.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
@@ -9,6 +9,8 @@ import com.docuten.project.model.enums.SignatureProcessStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,17 +37,18 @@ public class SignatureProcess {
     @Column (nullable = false)
     private ProcessTypeEnum processType;
 
+    @Enumerated(EnumType.STRING)
     @Column (nullable = false)
     private SignatureProcessStatus status;
 
     @Column (nullable = false)
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @Column (nullable = false)
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
     @Column
-    private Date statusUpdateDate;
+    private LocalDateTime statusUpdateDate;
 
     @OneToOne (mappedBy = "signatureProcess", cascade = CascadeType.ALL)
     private Document document;

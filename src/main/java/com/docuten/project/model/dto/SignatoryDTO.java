@@ -1,6 +1,8 @@
 package com.docuten.project.model.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.docuten.project.model.enums.SignatoryStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +25,8 @@ public class SignatoryDTO {
     private String name;
     private String email;
     private int signOrder;
-    private String signStatus;
-    private Date signDate;
-    private Date creationDate;
+    private SignatoryStatus signStatus;
+    private LocalDateTime signDate;
+    private LocalDateTime creationDate;
     private SignatureProcessDTO signatureProcess;
 }

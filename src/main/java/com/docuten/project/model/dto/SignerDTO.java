@@ -22,6 +22,7 @@ public class SignerDTO {
     @NotBlank (message = "El nombre del firmante es obligatorio")
     private String name;
    
+    @NotBlank (message = "El correo electrónico del firmante es obligatorio")
     @Email (message = "El correo electrónico del firmante es inválido")
     private String email;
 }
