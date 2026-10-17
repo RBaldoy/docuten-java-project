@@ -26,7 +26,7 @@ Supuestos:
 * Todos los campos de la petición son obligatorios
 * El orden de la lista determina el orden específico de firma
 * Cuando se crea el proceso, su estado inicial es PENDING
-* El identificador del proceso será un número autoincrementable de PostgrSQL
+* El identificador del proceso será un número autoincrementable
 
 Casos límite:
 * Validación de la petición (inválida o incompleta)
@@ -38,6 +38,13 @@ Casos límite:
 * Fallo al almacenar el documento
 
 Diseño:
+* Se creará un controlador y servicio para cada uno de los tipos de operaciones:
+    *   Crear proceso de firma
+    *   Firmar o rechazar un documento
+    *   Consultar documento
+    *   Verificar firma de documento
+* Se creará una entidad y un repositorio para cada una de las entidades mencionadas en el modelo de datos
+* Se crearán los mapper necesarios para transferir los datos de un objeto DTO a un objeto Entidad y viceversa
 * PDF: almcenar en base de datos: referencia, tamaño y HASH SHA-256
 * Almacenar el disco los documentos
 * Tipo de proceso: enum PARALLEL o SEQUENTIAL (escalable a más tipos)
@@ -50,18 +57,18 @@ Diseño:
 ### Entidad: **signature_process**
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
-| id | SERIAL | PK |
+| id | BIGINT | PK |
 | process_type | VARCHAR(30) | Secuencial/Paralelo
 | status | VARCHAR(30) | Estado del proceso |
 | creation_date | TIMESTAMP | Fecha de creación |
 | expiration_date | TIMESTAMP | Fecha de caducidad del proceso |
-| status_date | TIMESTAMP | Fecha de la última actualización del estado |
+| status_update_date | TIMESTAMP | Fecha de la última actualización del estado |
 
 ### Entidad: **document**
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
-| id | SERIAL | PK |
-| signature_process_id | SERIAL | FK UNIQUE de signature_process |
+| id | BIGINT | PK |
+| signature_process_id | BIGINT | FK UNIQUE de signature_process |
 | file_name | VARCHAR(255) | Nombre del documento |
 | storage_path | VARCHAR(1024) | Path de la ubicación del documento |
 | hash | CHAR(64) | Hash SHA-256 del documento |
@@ -71,8 +78,8 @@ Diseño:
 ### Entidad: **signatories**
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
-| id | SERIAL | PK |
-| signature_process_id | SERIAL | FK de signature_process |
+| id | BIGINT | PK |
+| signature_process_id | BIGINT | FK de signature_process |
 | name | VARCHAR(250) | Nombre del firmante |
 | email | VARCHAR(320) | Email del firmante |
 | sign_order | INTEGER | Posición de firma secuencial |
@@ -110,3 +117,4 @@ Diseño:
 * Almacenar una auditoría de cada proceso
 * Autenticación, permisos y roles de usuarios
 * Configuración para varios entornos
+* Añadir trazas de logs

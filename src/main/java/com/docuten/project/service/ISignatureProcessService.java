@@ -1,14 +1,11 @@
 package com.docuten.project.service;
 
-import org.springframework.stereotype.Service;
-
 import com.docuten.project.controller.dto.SignatureProcessRequest;
 
 /**
  * Service interface for handling signature process operations
  * ISignatureProcessService
  */
-@Service
 public interface ISignatureProcessService {
 
     /**
