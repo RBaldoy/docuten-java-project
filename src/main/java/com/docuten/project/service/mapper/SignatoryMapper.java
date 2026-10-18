@@ -5,17 +5,20 @@ import org.springframework.stereotype.Component;
 import com.docuten.project.model.Signatory;
 import com.docuten.project.model.dto.SignatoryDTO;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Mapper for converting between Signatory and SignatoryDTO
  * SignatoryMapper
  */
 @Component
-@RequiredArgsConstructor
 public class SignatoryMapper {
 
     private final SignatureProcessMapper signatureProcessMapper;
+
+    public SignatoryMapper(@Lazy SignatureProcessMapper signatureProcessMapper) {
+        this.signatureProcessMapper = signatureProcessMapper;
+    }
 
     /**
      * Map a Signatory entity to a SignatoryDTO.

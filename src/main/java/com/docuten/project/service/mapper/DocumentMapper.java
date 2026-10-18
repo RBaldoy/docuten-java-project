@@ -5,17 +5,20 @@ import org.springframework.stereotype.Component;
 import com.docuten.project.model.Document;
 import com.docuten.project.model.dto.DocumentDTO;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Mapper for converting between Document and DocumentDTO
  * DocumentMapper
  */
 @Component
-@RequiredArgsConstructor 
 public class DocumentMapper {
 
     private final SignatureProcessMapper signatureProcessMapper;
+
+    public DocumentMapper(@Lazy SignatureProcessMapper signatureProcessMapper) {
+        this.signatureProcessMapper = signatureProcessMapper;
+    }
 
     /**
      * Map a Document entity to a DocumentDTO.

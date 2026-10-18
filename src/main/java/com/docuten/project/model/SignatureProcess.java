@@ -34,6 +34,7 @@ public class SignatureProcess {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column (nullable = false)
     private ProcessTypeEnum processType;
 
