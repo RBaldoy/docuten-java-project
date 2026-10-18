@@ -22,7 +22,7 @@ public class DocumentDetailsService implements IDocumentDetailsService {
     }
 
     @Override
-    public DocumentDetailsResponseDTO getDocumentDetails(Long documentId) {
+    public DocumentDetailsResponseDTO getDocumentDetails(Long documentId) throws DocumentDetailsException {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new DocumentDetailsException("Document not found"));
         SignatureProcess signatureProcess = document.getSignatureProcess();
