@@ -133,7 +133,9 @@ public class SignDocumentService implements ISignDocumentService {
             documentVersionRepository.save(newDocumentVersion);
         }
 
-        updateSignatory(signatory);
+        signatory.setSignStatus(SignatoryStatusEnum.SIGNED);
+        signatory.setSignDate(LocalDateTime.now(ZoneId.systemDefault()));
+        signatoryRepository.save(signatory);
 
         if (signatureProcessIsCompleted(signatureProcess)) {
             signatureProcess.setStatus(SignatureProcessStatusEnum.COMPLETED);
@@ -256,16 +258,6 @@ public class SignDocumentService implements ISignDocumentService {
         } catch (IOException e) {
             throw new SignDocumentException("Error signing PDF document", e);
         }
-    }
-
-    /**
-     * Updates the status and sign date of the given signatory.
-     * @param signatory the signatory to update
-     */
-    private void updateSignatory(Signatory signatory) {
-        signatory.setSignStatus(SignatoryStatusEnum.SIGNED);
-        signatory.setSignDate(LocalDateTime.now(ZoneId.systemDefault()));
-        signatoryRepository.save(signatory);
     }
 
     /**

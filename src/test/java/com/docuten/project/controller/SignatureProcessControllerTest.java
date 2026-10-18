@@ -51,4 +51,23 @@ class SignatureProcessControllerTest {
         assertSame(failure, thrown);
         verify(signatureProcessService).createProcess(request);
     }
+
+    @Test
+    void verifySignatureReturnsServiceResult() {
+        when(signatureProcessService.verifySignature(5L)).thenReturn(true);
+
+        ResponseEntity<Boolean> response = controller.verifySignature(5L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(true, response.getBody());
+    }
+
+    @Test
+    void verifySignaturePropagatesServiceException() {
+        SignatureProcessException failure = new SignatureProcessException("not found");
+        when(signatureProcessService.verifySignature(5L)).thenThrow(failure);
+
+        assertSame(failure, Assertions.assertThrows(SignatureProcessException.class,
+                () -> controller.verifySignature(5L)));
+    }
 }
