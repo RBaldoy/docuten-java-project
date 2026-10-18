@@ -59,18 +59,36 @@ Diseño:
 * Solo puede firmar si le toca, si el proceso está activo y si no ha firmado ya.
 * Cuando todos han firmado, el proceso queda completado.
 
-Preguntas a producto:
-
 Supuestos:
 * El firmante obtiene las claves para firmar el documento
 * El firmante solo firma el documento con éxito si es su turno (en caso de ser un proceso secuencial)
 * Cuando firma el primer firmante, el estado del proceso de firma pasa a ser IN_PROGRESS
-
-Casos Límite:
+* Para firmar un documento se necesita el identificador del proceso, el identificador del firmante y la clave privada codificada
+* Las claves y certificado siempre se almacenan y devuelven codificados
 
 Diseño:
 * Crea un enpoint para generar las claves de los firmantes
-* Crear un endpoint para firmar un documento a partir de su id y de la clave privada codificada
+* Se crea una clave privada, una clave pública y un certificado
+* Se utiliza SHA256 con RSA y un certificado de tipo X509 
+* Crear un endpoint para firmar un documento a partir del id de documento, el id de firmante y de la clave privada codificada
+* Se valida que exista el identificador del documento, del firmante y del proceso de firma
+* Se valida que el firmante forme parte del proceso de firma
+* Se valida que el proceso de firma no esté completado, expirado o rechazado
+* Se valida que el firmante no haya firmado ni rechazado el documento anteriormente
+* Se valida que en caso de proceso de firma secuencial, sea el turno del firmante
+* na vez firmado el documento, se crea una nueva versión firmada del documento
+* Se actualizan los estados del proceso de firma y del firmante
+
+### Rechazar un documento
+* Un firmante puede rechazar el documento indicando un motivo. El proceso queda rechazado.
+
+Supuesto:
+* Se necesita el identificador del documento y del firmante para rechazar un documento
+
+Diseño:
+* Se comprueba que el identificador el documento se válido
+* Se comprueba que el firmante forme parte del proceso de firma
+* se actualiza a rechazado los estados del firmante y del proceso de firma
 
 ### Consultar un documento
 * Devuelve el estado del proceso y de cada firmante
@@ -94,6 +112,27 @@ Supuestos:
         * orden de firma
         * estado de firma
 
+### Verificación de la firma
+* Dado un proceso, comprueba que todas las firmas son válidas y que el documento no se ha modificado
+
+Supuesto:
+* Se verifica la validez de las firmas del documento a partir del identificador del proceso de firma
+* Para que un documento sea verificable debe estar firmado, sus firmas deben ser válidas y el contenido del documento no debe haber sufrido modificaciones (comprobación por hash)
+
+Diseño:
+* Se comprueba que el proceso de firma es válido
+* Se obtiene la última versión del documento
+* Se verifica que el documento no ha sido modificado comparando el hash almacenado con el hash generado a partir los bytes del documento
+* Se verificantodas las firmas del documento y el certificado a partir de los bytes del documento
+
+
+### Notificación de los procesos de firma parados
+* Implementaría una tarea programada (CRON JOB) para que revise periodicamente el estado de los procesos de firma pendientes o en curso.
+* En caso de proceso de tipo secuencial, notificar al próximo usuario en la cola para firmar
+* En caso de proceso de tipo paralelo, notificar a todos los usuarios firmantes de dicho proceso
+* Antes de notificar al usuario, comprobar que no ha sido notificado en un corto plazo de tiempo
+* Habría que definir cuanto tiempo es necesario para identificar un proceso como parado y el margen de tiempo para volver a notificar a un usuario
+
 ## Modelo de datos
 
 ### Entidad: **signature_process**
@@ -105,6 +144,7 @@ Supuestos:
 | creation_date | TIMESTAMP | Fecha de creación |
 | expiration_date | TIMESTAMP | Fecha de caducidad del proceso |
 | status_update_date | TIMESTAMP | Fecha de la última actualización del estado |
+| rejection_reason | VARCHAR(256) | Motivo del rechazo del proceso de firma de un documento
 
 ### Entidad: **document**
 | Propiedad | Tipo | Descripción |
@@ -133,14 +173,27 @@ Supuestos:
 | Propiedad | Tipo | Descripción |
 |-----------|------|-------------|
 | id | BIGINT | PK |
+| signatory_id | BIGINT | FK de signatory |
 | public_key_base64 | TEXT | Clave pública en Base64 |
 | private_key_base64 | TEXT | Clave privada en Base64 |
 | certificate_base_64 | TEXT | Certificado en Base64 |
+
+### Entidad **document_version**
+| Propiedad | Tipo | Descripción |
+|-----------|------|-------------|
+| id | BIGINT | PK |
+| document_id | BIGINT | FK de document |
+| version_number | INTEGER | Número de versión |
+| storage_path | VARCHAR(1024) | Path de la ubicación del documento
+| hash | CHAR(64) | Hash SHA-256 del documento |
+| creation_date | TIMESTAMP | Fecha de persistencia del documento |
+> UNIQUE(document_id, version_number) 
 
 ### Relaciones entre entidades
 * signature_process -- 1:1 --> document (Un proceso de firma por cada documento)
 * signature_process -- 1:N --> signatories (Varios firmantes para un mismo proceso de firma)
 * signatories --1:1--> signatory_key
+* document --1:N--> document_version
 
 ## Estados del proceso
 **Estados del proceso de firma**
@@ -171,3 +224,8 @@ Supuestos:
 * Añadir trazas de logs
 * Implementar un CRON Job para actualizar el estado de los procesos de firma con fecha expirada
 * Implementar la notificación a los usuarios cuando sea su turno en los procesos de firma secuencial
+* Crear un tabla usuarios en lugar de almacenar los datos en firmantes y no depender del identificador de firmantes
+
+## Uso de IA
+* Los test unitarios han sido generado con Copilot
+* Para el desarrollo del proceso se han utilizado las Inline Suggestions de Copilot
