@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class SignatureProcessDTO {
 
     private Long id;
     private ProcessTypeEnum processType;
-    private SignatureProcessStatus status;
+    private SignatureProcessStatusEnum status;
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
     private LocalDateTime statusUpdateDate;

@@ -18,7 +18,7 @@ import com.docuten.project.model.Signatory;
 import com.docuten.project.model.SignatureProcess;
 import com.docuten.project.model.dto.SignatoryDTO;
 import com.docuten.project.model.dto.SignatureProcessDTO;
-import com.docuten.project.model.enums.SignatoryStatus;
+import com.docuten.project.model.enums.SignatoryStatusEnum;
 
 @ExtendWith(MockitoExtension.class)
 class SignatoryMapperTest {
@@ -59,7 +59,7 @@ class SignatoryMapperTest {
                 .name("Ada")
                 .email("ada@example.com")
                 .signOrder(3)
-                .signStatus(SignatoryStatus.PENDING)
+                .signStatus(SignatoryStatusEnum.PENDING)
                 .signDate(LocalDateTime.now())
                 .creationDate(LocalDateTime.now().minusDays(1))
                 .signatureProcess(processDTO)
@@ -103,7 +103,7 @@ class SignatoryMapperTest {
         signatory.setName("Ada");
         signatory.setEmail("ada@example.com");
         signatory.setSignOrder(2);
-        signatory.setSignStatus(SignatoryStatus.PENDING);
+        signatory.setSignStatus(SignatoryStatusEnum.PENDING);
         signatory.setSignDate(signDate);
         signatory.setCreationDate(creationDate);
         signatory.setSignatureProcess(process);

@@ -22,7 +22,7 @@ import com.docuten.project.model.dto.DocumentDTO;
 import com.docuten.project.model.dto.SignatoryDTO;
 import com.docuten.project.model.dto.SignatureProcessDTO;
 import com.docuten.project.model.enums.ProcessTypeEnum;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 
 @ExtendWith(MockitoExtension.class)
 class SignatureProcessMapperTest {
@@ -71,7 +71,7 @@ class SignatureProcessMapperTest {
         SignatoryDTO signatoryDTO = SignatoryDTO.builder().email("ada@example.com").build();
         SignatureProcessDTO dto = SignatureProcessDTO.builder()
                 .processType(ProcessTypeEnum.PARALLEL)
-                .status(SignatureProcessStatus.PENDING)
+                .status(SignatureProcessStatusEnum.PENDING)
                 .creationDate(LocalDateTime.now().minusDays(1))
                 .expirationDate(LocalDateTime.now().plusDays(2))
                 .statusUpdateDate(LocalDateTime.now())
@@ -121,7 +121,7 @@ class SignatureProcessMapperTest {
         SignatureProcess process = new SignatureProcess();
         process.setId(7L);
         process.setProcessType(ProcessTypeEnum.SEQUENTIAL);
-        process.setStatus(SignatureProcessStatus.PENDING);
+        process.setStatus(SignatureProcessStatusEnum.PENDING);
         process.setCreationDate(creation);
         process.setExpirationDate(expiration);
         process.setStatusUpdateDate(statusUpdate);

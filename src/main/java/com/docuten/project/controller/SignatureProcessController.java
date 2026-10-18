@@ -28,9 +28,9 @@ public class SignatureProcessController {
     }
 
     @PostMapping("/create")
-    @Operation (summary = "Create a new signature process", description = "Creates a new signature process based on the provided request", responses = {
-            @ApiResponse(responseCode = "200", description = "Successfully created the signature process"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data")
+    @Operation (summary = "Crea un proceso de firma", description = "Crea un nuevo proceso de firma basado en la solicitud proporcionada", responses = {
+            @ApiResponse(responseCode = "200", description = "Proceso de firma creado con éxito"),
+            @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos")
     })
     public ResponseEntity<Long> createSignatureProcess(@Valid @RequestBody SignatureProcessRequest request) {
         Long processId = signatureProcessService.createProcess(request);

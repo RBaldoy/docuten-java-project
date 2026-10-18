@@ -23,8 +23,8 @@ import com.docuten.project.model.dto.SignatoryDTO;
 import com.docuten.project.model.dto.SignatureProcessDTO;
 import com.docuten.project.model.dto.SignatureProcessRequest;
 import com.docuten.project.model.dto.SignerDTO;
-import com.docuten.project.model.enums.SignatoryStatus;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatoryStatusEnum;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 import com.docuten.project.repository.SignatureProcessRepository;
 import com.docuten.project.service.ISignatureProcessService;
 import com.docuten.project.service.constants.Constants;
@@ -72,7 +72,7 @@ public class SignatureProcessService implements ISignatureProcessService {
 
         SignatureProcessDTO signatureProcessDTO = SignatureProcessDTO.builder()
                 .processType(request.getProcessType())
-                .status(SignatureProcessStatus.PENDING)
+                .status(SignatureProcessStatusEnum.PENDING)
                 .creationDate(LocalDateTime.now(ZoneId.systemDefault()))
                 .expirationDate(request.getExpirationDate())
                 .build();
@@ -94,7 +94,7 @@ public class SignatureProcessService implements ISignatureProcessService {
                     .email(requestSigners.get(i).getEmail())
                     .name(requestSigners.get(i).getName())
                     .signOrder(i + 1)
-                    .signStatus(SignatoryStatus.PENDING)
+                    .signStatus(SignatoryStatusEnum.PENDING)
                     .creationDate(LocalDateTime.now(ZoneId.systemDefault()))
                     .signatureProcess(signatureProcessDTO)
                     .build();

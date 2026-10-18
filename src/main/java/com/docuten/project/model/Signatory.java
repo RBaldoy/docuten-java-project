@@ -2,7 +2,7 @@ package com.docuten.project.model;
 
 import java.time.LocalDateTime;
 
-import com.docuten.project.model.enums.SignatoryStatus;
+import com.docuten.project.model.enums.SignatoryStatusEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +42,7 @@ public class Signatory {
 
     @Enumerated(EnumType.STRING)
     @Column (nullable = false)
-    private SignatoryStatus signStatus;
+    private SignatoryStatusEnum signStatus;
 
     @Column
     private LocalDateTime signDate;

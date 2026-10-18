@@ -19,7 +19,7 @@ import com.docuten.project.model.SignatureProcess;
 import com.docuten.project.model.dto.DocumentDTO;
 import com.docuten.project.model.dto.SignatureProcessDTO;
 import com.docuten.project.model.enums.ProcessTypeEnum;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 
 @ExtendWith(MockitoExtension.class)
 class DocumentMapperTest {
@@ -54,7 +54,7 @@ class DocumentMapperTest {
     void toEntityMapsFieldsAndSignatureProcess() {
         SignatureProcessDTO processDTO = SignatureProcessDTO.builder()
                 .processType(ProcessTypeEnum.PARALLEL)
-                .status(SignatureProcessStatus.PENDING)
+                .status(SignatureProcessStatusEnum.PENDING)
                 .build();
         DocumentDTO dto = DocumentDTO.builder()
                 .id(8L)

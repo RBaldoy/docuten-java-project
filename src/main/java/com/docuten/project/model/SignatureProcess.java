@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.docuten.project.model.enums.ProcessTypeEnum;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -40,7 +40,7 @@ public class SignatureProcess {
 
     @Enumerated(EnumType.STRING)
     @Column (nullable = false)
-    private SignatureProcessStatus status;
+    private SignatureProcessStatusEnum status;
 
     @Column (nullable = false)
     private LocalDateTime creationDate;

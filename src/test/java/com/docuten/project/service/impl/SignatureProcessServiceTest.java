@@ -34,8 +34,8 @@ import com.docuten.project.model.dto.SignatureProcessDTO;
 import com.docuten.project.model.dto.SignatureProcessRequest;
 import com.docuten.project.model.dto.SignerDTO;
 import com.docuten.project.model.enums.ProcessTypeEnum;
-import com.docuten.project.model.enums.SignatoryStatus;
-import com.docuten.project.model.enums.SignatureProcessStatus;
+import com.docuten.project.model.enums.SignatoryStatusEnum;
+import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 import com.docuten.project.repository.SignatureProcessRepository;
 import com.docuten.project.service.constants.Constants;
 import com.docuten.project.service.mapper.SignatureProcessMapper;
@@ -84,7 +84,7 @@ class SignatureProcessServiceTest {
         verify(signatureProcessMapper).toEntity(dtoCaptor.capture());
         SignatureProcessDTO process = dtoCaptor.getValue();
         assertEquals(ProcessTypeEnum.SEQUENTIAL, process.getProcessType());
-        assertEquals(SignatureProcessStatus.PENDING, process.getStatus());
+        assertEquals(SignatureProcessStatusEnum.PENDING, process.getStatus());
         assertNotNull(process.getCreationDate());
         assertEquals(request.getExpirationDate(), process.getExpirationDate());
         assertNotNull(process.getDocument());
@@ -97,7 +97,7 @@ class SignatureProcessServiceTest {
         assertEquals(2, process.getSignatories().size());
         assertEquals(1, process.getSignatories().get(0).getSignOrder());
         assertEquals(2, process.getSignatories().get(1).getSignOrder());
-        assertEquals(SignatoryStatus.PENDING, process.getSignatories().get(0).getSignStatus());
+        assertEquals(SignatoryStatusEnum.PENDING, process.getSignatories().get(0).getSignStatus());
         assertEquals("Ada", process.getSignatories().get(0).getName());
         assertEquals("ada@example.com", process.getSignatories().get(0).getEmail());
         assertSame(process, process.getSignatories().get(0).getSignatureProcess());
