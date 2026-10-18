@@ -2,6 +2,7 @@ package com.docuten.project.service;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 import com.docuten.project.exception.SignatureJCAException;
 
@@ -12,13 +13,14 @@ import com.docuten.project.exception.SignatureJCAException;
 public interface ISignatureJCAService {
 
     /**
-     * Signs the given document bytes using the provided private key.
+     * Signs the given PDF document bytes using the provided private key and certificate.
      * @param documentBytes the bytes of the document to be signed
      * @param privateKey the private key used for signing
+     * @param certificate the X.509 certificate associated with the private key
      * @return the generated signature bytes
      * @throws SignatureJCAException if an error occurs during the signing process
      */
-    byte[] sign(byte[] documentBytes, PrivateKey privateKey) throws SignatureJCAException;
+    byte[] signPDF(byte[] documentBytes, PrivateKey privateKey, X509Certificate certificate) throws SignatureJCAException;
 
     /**
      * Verifies the given signature against the provided document bytes using the specified public key.

@@ -132,7 +132,7 @@ public class SignatureProcessService implements ISignatureProcessService {
     private Path storeDocument(byte[] document, String fileName) throws SignatureProcessException {
         try {
             Files.createDirectories(documentStoragePath);
-            Path filePath = documentStoragePath.resolve(fileName + ".pdf");
+            Path filePath = documentStoragePath.resolve(fileName);
             return Files.write(filePath, document, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
         } catch (IOException e) {
             throw new SignatureProcessException("Error al almacenar el documento", e);

@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,5 +56,6 @@ public class SignatureProcess {
     private Document document;
 
     @OneToMany (mappedBy = "signatureProcess", cascade = CascadeType.ALL)
+    @OrderBy ("signOrder ASC")
     private List<Signatory> signatories;
 }

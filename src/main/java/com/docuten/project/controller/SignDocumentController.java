@@ -42,14 +42,14 @@ public class SignDocumentController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/pdf/{id}")
-    @Operation (summary = "Firma un documento PDF", description = "Firma un documento PDF por su identificador de proceso de firma", responses = {
+    @PostMapping("/pdf/{documentId}/user/{signatoryId}")
+    @Operation (summary = "Firma un documento PDF", description = "Firma un documento PDF por su identificador de documento y el identificador del firmante", responses = {
             @ApiResponse(responseCode = "200", description = "Documento firmado con éxito"),
             @ApiResponse(responseCode = "400", description = "Datos de solicitud inválidos")
     })
-    public ResponseEntity<SignDocumentResponse> signPdfDocument(@NotNull @PathVariable("id") Long id, @RequestBody SignDocumentRequest request) {
+    public ResponseEntity<SignDocumentResponse> signPdfDocument(@NotNull @PathVariable("documentId") Long documentId, @NotNull @PathVariable("signatoryId") Long signatoryId, @RequestBody SignDocumentRequest request) {
 
-        SignDocumentResponse response = signDocumentService.signPdfDocument(id, request);
+        SignDocumentResponse response = signDocumentService.signPdfDocument(documentId, signatoryId, request);
         return ResponseEntity.ok(response);
     }
 }

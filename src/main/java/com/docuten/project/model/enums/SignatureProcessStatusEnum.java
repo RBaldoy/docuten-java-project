@@ -9,5 +9,6 @@ public enum SignatureProcessStatusEnum {
     IN_PROGRESS,
     COMPLETED,
     EXPIRED,
+    REJECTED,
     ERROR
 }

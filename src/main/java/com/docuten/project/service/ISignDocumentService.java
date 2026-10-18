@@ -14,12 +14,13 @@ public interface ISignDocumentService {
     /**
      * Signs a PDF document with the given ID and request details.
      *
-     * @param id The ID of the PDF document to be signed.
+     * @param documentId The ID of the signing process for the PDF document.
+     * @param signatoryId The ID of the signatory.
      * @param request signing details.
      * @return result of the signing operation.
      * @throws SignDocumentException if there is an error during the signing process.
      */
-    SignDocumentResponse signPdfDocument(Long id, SignDocumentRequest request) throws SignDocumentException;
+    SignDocumentResponse signPdfDocument(Long documentId, Long signatoryId, SignDocumentRequest request) throws SignDocumentException;
 
     /**
      * Generates a key pair for the given signatory ID.
