@@ -17,4 +17,12 @@ public interface ISignatureProcessService {
      */
     Long createProcess(SignatureProcessRequest request)  throws SignatureProcessException;
 
+    /**
+     * Verifies the signature of the specified signature process
+     * @param processId The ID of the signature process to verify
+     * @return true if the signature is valid, false otherwise
+     * @throws SignatureProcessException if there is an error during the verification of the signature
+     */
+    boolean verifySignature(Long processId) throws SignatureProcessException;
+
 }

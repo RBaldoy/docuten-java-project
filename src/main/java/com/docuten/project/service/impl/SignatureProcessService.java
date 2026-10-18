@@ -10,12 +10,16 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.docuten.project.exception.SignatureProcessException;
+import com.docuten.project.model.Document;
+import com.docuten.project.model.DocumentVersion;
+import com.docuten.project.model.SignatureProcess;
 import com.docuten.project.model.dto.DocumentDTO;
 import com.docuten.project.model.dto.SignatoryDTO;
 import com.docuten.project.model.dto.SignatureProcessDTO;
@@ -23,6 +27,7 @@ import com.docuten.project.model.dto.SignatureProcessRequest;
 import com.docuten.project.model.dto.SignerDTO;
 import com.docuten.project.model.enums.SignatoryStatusEnum;
 import com.docuten.project.model.enums.SignatureProcessStatusEnum;
+import com.docuten.project.repository.DocumentVersionRepository;
 import com.docuten.project.repository.SignatureProcessRepository;
 import com.docuten.project.service.ISignatureJCAService;
 import com.docuten.project.service.ISignatureProcessService;
@@ -35,15 +40,18 @@ public class SignatureProcessService implements ISignatureProcessService {
     private final ISignatureJCAService signatureJCAService;
     private final SignatureProcessMapper signatureProcessMapper;
     private final SignatureProcessRepository signatureProcessRepository;
+    private final DocumentVersionRepository documentVersionRepository;
     private final Path documentStoragePath;
 
     public SignatureProcessService(ISignatureJCAService signatureJCAService,
             SignatureProcessMapper signatureProcessMapper,
             SignatureProcessRepository signatureProcessRepository,
+            DocumentVersionRepository documentVersionRepository,
             @Value("${document.storage.path}") String documentStoragePath) {
         this.signatureJCAService = signatureJCAService;
         this.signatureProcessMapper = signatureProcessMapper;
         this.signatureProcessRepository = signatureProcessRepository;
+        this.documentVersionRepository = documentVersionRepository;
         this.documentStoragePath = Paths.get(documentStoragePath).toAbsolutePath().normalize();
     }
 
@@ -106,6 +114,38 @@ public class SignatureProcessService implements ISignatureProcessService {
         signatureProcessDTO.setSignatories(signatories);
 
         return signatureProcessRepository.save(signatureProcessMapper.toEntity(signatureProcessDTO)).getId();
+    }
+
+    @Override
+    public boolean verifySignature(Long processId) throws SignatureProcessException {
+        
+        SignatureProcess signatureProcess = signatureProcessRepository.findById(processId)
+                .orElseThrow(() -> new SignatureProcessException("Signature process not found for ID: " + processId));
+
+        Document document = signatureProcess.getDocument();
+
+        Optional<DocumentVersion> latestDocumentVersion = documentVersionRepository.findByDocumentIdOrderByVersionNumberDesc(document.getId())
+                .stream()
+                .findFirst();
+        
+        String storagePath = null;
+        String expectedHash = null;
+        if (latestDocumentVersion.isEmpty()) {
+            storagePath = document.getStoragePath();
+            expectedHash = document.getHash();
+        } else {
+            storagePath = latestDocumentVersion.get().getStoragePath();
+            expectedHash = latestDocumentVersion.get().getHash();
+        }
+
+        try {        
+            Path originalPath = Paths.get(storagePath);
+            byte[] documentBytes = Files.readAllBytes(originalPath);
+
+            return signatureJCAService.verifyDocumentHash(documentBytes, expectedHash) && signatureJCAService.verifyPdfSignatures(documentBytes);
+        } catch (IOException e) {
+            throw new SignatureProcessException("Error reading the document from storage path", e);
+        }
     }
 
     /**

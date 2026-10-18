@@ -1,7 +1,6 @@
 package com.docuten.project.service;
 
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 
 import com.docuten.project.exception.SignatureJCAException;
@@ -22,15 +21,24 @@ public interface ISignatureJCAService {
      */
     byte[] signPDF(byte[] documentBytes, PrivateKey privateKey, X509Certificate certificate) throws SignatureJCAException;
 
+    
     /**
-     * Verifies the given signature against the provided document bytes using the specified public key.
-     * @param documentBytes the bytes of the document to be verified
-     * @param signatureBytes the signature bytes to be verified
-     * @param publicKey the public key used for verification
-     * @return true if the signature is valid, false otherwise
+     * Verifies the hash of the given PDF document against the expected hash. (Document not modified)
+     *
+     * @param pdfBytes the bytes of the PDF document
+     * @param expectedHash the expected Base64-encoded hash
+     * @return true if the hash matches, false otherwise
      * @throws SignatureJCAException if an error occurs during the verification process
      */
-    boolean verify(byte[] documentBytes, byte[] signatureBytes, PublicKey publicKey) throws SignatureJCAException;
+    boolean verifyDocumentHash(byte[] pdfBytes, String expectedHash) throws SignatureJCAException;
+
+    /**
+     * Verifies the signatures of the given PDF document.
+     * @param pdfBytes the bytes of the PDF document to verify
+     * @return true if all signatures are valid, false otherwise
+     * @throws SignatureJCAException if an error occurs during the verification process
+     */
+    boolean verifyPdfSignatures(byte[] pdfBytes) throws SignatureJCAException;
 
     /**
      * Calculates the SHA-256 hash of the given data.

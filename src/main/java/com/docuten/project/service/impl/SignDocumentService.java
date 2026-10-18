@@ -210,7 +210,7 @@ public class SignDocumentService implements ISignDocumentService {
     /**
      * Signs the given PDF document with the provided private key and returns the new document version.
      * @param document the document to be signed
-     * @param storePath the path where the original document is stored
+     * @param storagePath the path where the original document is stored
      * @param versionNumber the version number for the new signed document
      * @param signatory the signatory performing the signature
      * @param encodedPrivateKey the Base64-encoded private key of the signatory
@@ -218,7 +218,7 @@ public class SignDocumentService implements ISignDocumentService {
      * @throws SignDocumentException if an error occurs during the signing process
      * @throws KeyManagerException if an error occurs while handling the keys
      */
-    private DocumentVersion signPDF(Document document, String storePath, Integer versionNumber, Signatory signatory, String encodedPrivateKey)
+    private DocumentVersion signPDF(Document document, String storagePath, Integer versionNumber, Signatory signatory, String encodedPrivateKey)
             throws SignDocumentException, KeyManagerException {
         
                 try {
@@ -232,7 +232,7 @@ public class SignDocumentService implements ISignDocumentService {
                 throw new SignDocumentException("Private key does not match the certificate's public key");
             }
 
-            Path originalPath = Paths.get(storePath);
+            Path originalPath = Paths.get(storagePath);
 
             byte[] originalPdf = Files.readAllBytes(originalPath);
 

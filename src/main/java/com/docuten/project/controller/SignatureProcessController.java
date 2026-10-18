@@ -1,6 +1,8 @@
 package com.docuten.project.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import com.docuten.project.service.ISignatureProcessService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Controller for handling signature process related requests
@@ -35,5 +38,11 @@ public class SignatureProcessController {
     public ResponseEntity<Long> createSignatureProcess(@Valid @RequestBody SignatureProcessRequest request) {
         Long processId = signatureProcessService.createProcess(request);
         return ResponseEntity.ok(processId);
+    }
+
+    @GetMapping("/verify-signature/{processId}")
+    public ResponseEntity<Boolean> verifySignature(@NotNull @PathVariable Long processId) {
+        boolean isSignatureValid = signatureProcessService.verifySignature(processId);
+        return ResponseEntity.ok(isSignatureValid);
     }
 }
