@@ -47,7 +47,7 @@ Diseño:
 * Se creará una entidad y un repositorio para cada una de las entidades mencionadas en el modelo de datos
 * Se crearán los mapper necesarios para transferir los datos de un objeto DTO a un objeto Entidad y viceversa 
 * PDF: almcenar en base de datos: referencia, tamaño y HASH SHA-256
-* Almacenar el disco los documentos
+* Almacenar en disco los documentos (raíz del proyecto /storage/documents)
 * Tipo de proceso: enum PARALLEL o SEQUENTIAL (escalable a más tipos)
 * Orden en la lista de firmantes
 * La creación el proceso de firma debe de ser una transacción, con la objetivo de no persistir el proceso de forma incompleta en caso de error.
