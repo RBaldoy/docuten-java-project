@@ -23,6 +23,14 @@ public class DocumentMapper {
      * @return DocumentDTO
      */
     public DocumentDTO toDTO(Document document) {
+        return toDTO(document, true);
+    }
+
+    DocumentDTO toDTOWithoutSignatureProcess(Document document) {
+        return toDTO(document, false);
+    }
+
+    private DocumentDTO toDTO(Document document, boolean includeSignatureProcess) {
         if (document == null) {
             return null;
         }
@@ -36,7 +44,7 @@ public class DocumentMapper {
                 .creationDate(document.getCreationDate())
                 .build();
         
-        if (document.getSignatureProcess() != null) {
+        if (includeSignatureProcess && document.getSignatureProcess() != null) {
             dto.setSignatureProcess(signatureProcessMapper.toDTO(document.getSignatureProcess()));
         }
         return dto;
@@ -48,6 +56,14 @@ public class DocumentMapper {
      * @return Document entity
      */
     public Document toEntity(DocumentDTO documentDTO) {
+        return toEntity(documentDTO, true);
+    }
+
+    Document toEntityWithoutSignatureProcess(DocumentDTO documentDTO) {
+        return toEntity(documentDTO, false);
+    }
+
+    private Document toEntity(DocumentDTO documentDTO, boolean includeSignatureProcess) {
         if (documentDTO == null) {
             return null;
         }
@@ -59,7 +75,7 @@ public class DocumentMapper {
         document.setSize(documentDTO.getSize());
         document.setCreationDate(documentDTO.getCreationDate());
 
-        if (documentDTO.getSignatureProcess() != null) {
+        if (includeSignatureProcess && documentDTO.getSignatureProcess() != null) {
             document.setSignatureProcess(signatureProcessMapper.toEntity(documentDTO.getSignatureProcess()));
         }
         return document;

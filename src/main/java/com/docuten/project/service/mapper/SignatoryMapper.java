@@ -23,6 +23,14 @@ public class SignatoryMapper {
      * @return SignatoryDTO
      */
     public SignatoryDTO toDTO(Signatory signatory) {
+        return toDTO(signatory, true);
+    }
+
+    SignatoryDTO toDTOWithoutSignatureProcess(Signatory signatory) {
+        return toDTO(signatory, false);
+    }
+
+    private SignatoryDTO toDTO(Signatory signatory, boolean includeSignatureProcess) {
         if (signatory == null) {
             return null;
         }
@@ -37,7 +45,7 @@ public class SignatoryMapper {
                 .creationDate(signatory.getCreationDate())
                 .build();
 
-        if (signatory.getSignatureProcess() != null) {
+        if (includeSignatureProcess && signatory.getSignatureProcess() != null) {
             signatoryDTO.setSignatureProcess(signatureProcessMapper.toDTO(signatory.getSignatureProcess()));
         }
         return signatoryDTO;
@@ -49,6 +57,14 @@ public class SignatoryMapper {
      * @return Signatory entity
      */
     public Signatory toEntity(SignatoryDTO signatoryDTO) {
+        return toEntity(signatoryDTO, true);
+    }
+
+    Signatory toEntityWithoutSignatureProcess(SignatoryDTO signatoryDTO) {
+        return toEntity(signatoryDTO, false);
+    }
+
+    private Signatory toEntity(SignatoryDTO signatoryDTO, boolean includeSignatureProcess) {
         if (signatoryDTO == null) {
             return null;
         }
@@ -61,7 +77,7 @@ public class SignatoryMapper {
         signatory.setSignDate(signatoryDTO.getSignDate());
         signatory.setCreationDate(signatoryDTO.getCreationDate());
 
-        if (signatoryDTO.getSignatureProcess() != null) {
+        if (includeSignatureProcess && signatoryDTO.getSignatureProcess() != null) {
             signatory.setSignatureProcess(signatureProcessMapper.toEntity(signatoryDTO.getSignatureProcess()));
         }
         return signatory;

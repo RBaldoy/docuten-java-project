@@ -38,12 +38,12 @@ public class SignatureProcessMapper {
                 .build();
         
         if (signatureProcess.getDocument() != null) {
-            dto.setDocument(documentMapper.toDTO(signatureProcess.getDocument()));
+            dto.setDocument(documentMapper.toDTOWithoutSignatureProcess(signatureProcess.getDocument()));
         }
 
         if (signatureProcess.getSignatories() != null) {
             dto.setSignatories(signatureProcess.getSignatories().stream()
-                    .map(signatoryMapper::toDTO)
+                    .map(signatoryMapper::toDTOWithoutSignatureProcess)
                     .toList());
         }
 
@@ -68,13 +68,15 @@ public class SignatureProcessMapper {
         entity.setStatusUpdateDate(signatureProcessDTO.getStatusUpdateDate());
 
         if (signatureProcessDTO.getDocument() != null) {
-            entity.setDocument(documentMapper.toEntity(signatureProcessDTO.getDocument()));
+            entity.setDocument(documentMapper.toEntityWithoutSignatureProcess(signatureProcessDTO.getDocument()));
+            entity.getDocument().setSignatureProcess(entity);
         }
 
         if (signatureProcessDTO.getSignatories() != null) {
             entity.setSignatories(signatureProcessDTO.getSignatories().stream()
-                    .map(signatoryMapper::toEntity)
+                    .map(signatoryMapper::toEntityWithoutSignatureProcess)
                     .toList());
+            entity.getSignatories().forEach(signatory -> signatory.setSignatureProcess(entity));
         }
 
         return entity;
