@@ -225,6 +225,7 @@ Diseño:
 * Implementar un CRON Job para actualizar el estado de los procesos de firma con fecha expirada
 * Implementar la notificación a los usuarios cuando sea su turno en los procesos de firma secuencial
 * Crear un tabla usuarios en lugar de almacenar los datos en firmantes y no depender del identificador de firmantes
+* Anñadir nivel de seguridad en la API con JWT
 
 ## Uso de IA
 * Los test unitarios han sido generado con Copilot
