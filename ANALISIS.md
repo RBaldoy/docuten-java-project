@@ -53,6 +53,28 @@ Diseño:
 * La creación el proceso de firma debe de ser una transacción, con la objetivo de no persistir el proceso de forma incompleta en caso de error.
 * Fecha de caducidad: TIMESTAMP en PostgreSQL
 
+### Consultar un documento
+* Devuelve el estado del proceso y de cada firmante
+
+Preguntas a producto:
+* ¿Cuando se muestran los detalles del documento se debe de devolver el contenido del documento?
+* ¿Se debe de mostrar el orden de firma de los firmantes en caso de ser un proceso secuencial?
+
+Supuestos:
+* Se obtiene la información del documento, estado del proceso y firmantes a través del identificador del documento
+* El endpoint devuelve los siguientes campos:
+    * id del documento
+    * nombre del documento
+    * hash
+    * tamaño del documento
+    * fecha de creación del documento
+    * estado del proceso de firma
+    * Lista de firmantes con los siguientes datos:
+        * nombre
+        * email
+        * orden de firma
+        * estado de firma
+
 ## Modelo de datos
 
 ### Entidad: **signature_process**

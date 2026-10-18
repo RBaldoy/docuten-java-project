@@ -20,4 +20,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponseDTO(
                 "El cuerpo de la petición contiene un formato inválido."));
     }
+
+    @ExceptionHandler(DocumentDetailsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDocumentDetailsException(DocumentDetailsException e) {
+        return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+    }
 }
