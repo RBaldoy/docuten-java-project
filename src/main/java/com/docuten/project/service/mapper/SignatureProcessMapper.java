@@ -35,6 +35,7 @@ public class SignatureProcessMapper {
                 .creationDate(signatureProcess.getCreationDate())
                 .expirationDate(signatureProcess.getExpirationDate())
                 .statusUpdateDate(signatureProcess.getStatusUpdateDate())
+                .rejectionReason(signatureProcess.getRejectionReason())
                 .build();
         
         if (signatureProcess.getDocument() != null) {
@@ -66,6 +67,7 @@ public class SignatureProcessMapper {
         entity.setCreationDate(signatureProcessDTO.getCreationDate());
         entity.setExpirationDate(signatureProcessDTO.getExpirationDate());
         entity.setStatusUpdateDate(signatureProcessDTO.getStatusUpdateDate());
+        entity.setRejectionReason(signatureProcessDTO.getRejectionReason());
 
         if (signatureProcessDTO.getDocument() != null) {
             entity.setDocument(documentMapper.toEntityWithoutSignatureProcess(signatureProcessDTO.getDocument()));

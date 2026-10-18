@@ -37,8 +37,8 @@ public class GlobalExceptionHandler {
                 "El parámetro '" + e.getName() + "' tiene un formato inválido."));
     }
 
-    @ExceptionHandler(DocumentDetailsException.class)
-    public ResponseEntity<ErrorResponseDTO> handleDocumentDetailsException(DocumentDetailsException e) {
+    @ExceptionHandler(DocumentException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDocumentDetailsException(DocumentException e) {
         return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
     }
 

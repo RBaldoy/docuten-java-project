@@ -52,6 +52,9 @@ public class SignatureProcess {
     @Column
     private LocalDateTime statusUpdateDate;
 
+    @Column
+    private String rejectionReason;
+
     @OneToOne (mappedBy = "signatureProcess", cascade = CascadeType.ALL)
     private Document document;
 

@@ -29,6 +29,7 @@ public class SignatureProcessDTO {
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
     private LocalDateTime statusUpdateDate;
+    private String rejectionReason;
     private DocumentDTO document;
     private List<SignatoryDTO> signatories;
 }
