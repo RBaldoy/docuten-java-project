@@ -53,6 +53,25 @@ Diseño:
 * La creación el proceso de firma debe de ser una transacción, con la objetivo de no persistir el proceso de forma incompleta en caso de error.
 * Fecha de caducidad: TIMESTAMP en PostgreSQL
 
+### Firma de documentos
+* Un firmante firma el documento con su clave privada, usando una biblioteca criptográfica estándar
+(JCA). Las claves de cada firmante se generan y guardan de forma segura.
+* Solo puede firmar si le toca, si el proceso está activo y si no ha firmado ya.
+* Cuando todos han firmado, el proceso queda completado.
+
+Preguntas a producto:
+
+Supuestos:
+* El firmante obtiene las claves para firmar el documento
+* El firmante solo firma el documento con éxito si es su turno (en caso de ser un proceso secuencial)
+* Cuando firma el primer firmante, el estado del proceso de firma pasa a ser IN_PROGRESS
+
+Casos Límite:
+
+Diseño:
+* Crea un enpoint para generar las claves de los firmantes
+* Crear un endpoint para firmar un documento a partir de su id y de la clave privada codificada
+
 ### Consultar un documento
 * Devuelve el estado del proceso y de cada firmante
 
@@ -110,9 +129,18 @@ Supuestos:
 | sign_date | TIMESTAMP | Fecha de firma |
 | creation_date | TIMESTAMP | Fecha de creación del registro |
 
+### Entidad **signatory_key**
+| Propiedad | Tipo | Descripción |
+|-----------|------|-------------|
+| id | BIGINT | PK |
+| public_key_base64 | TEXT | Clave pública en Base64 |
+| private_key_base64 | TEXT | Clave privada en Base64 |
+| certificate_base_64 | TEXT | Certificado en Base64 |
+
 ### Relaciones entre entidades
 * signature_process -- 1:1 --> document (Un proceso de firma por cada documento)
 * signature_process -- 1:N --> signatories (Varios firmantes para un mismo proceso de firma)
+* signatories --1:1--> signatory_key
 
 ## Estados del proceso
 **Estados del proceso de firma**
@@ -141,3 +169,5 @@ Supuestos:
 * Autenticación, permisos y roles de usuarios
 * Configuración para varios entornos
 * Añadir trazas de logs
+* Implementar un CRON Job para actualizar el estado de los procesos de firma con fecha expirada
+* Implementar la notificación a los usuarios cuando sea su turno en los procesos de firma secuencial
