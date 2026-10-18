@@ -26,13 +26,13 @@ import lombok.Setter;
  * SignatureProcess
  */
 @Entity
-@Table(name = "signature_process")
+@Table (name = "signature_process")
 @Getter 
 @Setter
 public class SignatureProcess {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)

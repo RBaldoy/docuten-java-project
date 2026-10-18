@@ -1,13 +1,16 @@
 package com.docuten.project.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -42,7 +45,10 @@ public class Document {
     @Column (nullable = false)
     private LocalDateTime creationDate;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "signature_process_id", referencedColumnName = "id", nullable = false, unique = true)
+    @OneToMany (mappedBy = "document", cascade = CascadeType.ALL)
+    private List<DocumentVersion> documentVersions;
+
+    @OneToOne (optional = false)
+    @JoinColumn (name = "signature_process_id", referencedColumnName = "id", nullable = false, unique = true)
     private SignatureProcess signatureProcess;
 }

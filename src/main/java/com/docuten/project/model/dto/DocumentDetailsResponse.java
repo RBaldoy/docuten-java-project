@@ -12,14 +12,14 @@ import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 
 /**
  * Represents the document details response.
- * DocumentDetailsResponseDTO
+ * DocumentDetailsResponse
  */
 @Getter
 @Setter 
 @AllArgsConstructor 
 @NoArgsConstructor 
 @Builder
-public class DocumentDetailsResponseDTO {
+public class DocumentDetailsResponse {
 
     private Long id;
     private String fileName;

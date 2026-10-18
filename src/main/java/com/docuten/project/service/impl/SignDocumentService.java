@@ -1,6 +1,5 @@
 package com.docuten.project.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,13 +7,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.KeyPair;
 import java.security.PrivateKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Comparator;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,7 @@ import com.docuten.project.service.ISignatureJCAService;
 import jakarta.transaction.Transactional;
 
 import com.docuten.project.model.Document;
+import com.docuten.project.model.DocumentVersion;
 import com.docuten.project.model.Signatory;
 import com.docuten.project.model.SignatoryKey;
 import com.docuten.project.model.SignatureProcess;
@@ -36,6 +34,7 @@ import com.docuten.project.model.enums.ProcessTypeEnum;
 import com.docuten.project.model.enums.SignatoryStatusEnum;
 import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 import com.docuten.project.repository.DocumentRepository;
+import com.docuten.project.repository.DocumentVersionRepository;
 import com.docuten.project.repository.SignatoryKeyRepository;
 import com.docuten.project.repository.SignatoryRepository;
 import com.docuten.project.repository.SignatureProcessRepository;
@@ -50,6 +49,7 @@ public class SignDocumentService implements ISignDocumentService {
     private final SignatoryKeyRepository signatoryKeyRepository;
     private final SignatoryRepository signatoryRepository;
     private final DocumentRepository documentRepository;
+    private final DocumentVersionRepository documentVersionRepository;
     private final SignatureProcessRepository signatureProcessRepository;
 
     private Path documentStoragePath;
@@ -58,6 +58,7 @@ public class SignDocumentService implements ISignDocumentService {
             SignatoryKeyRepository signatoryKeyRepository,
             SignatoryRepository signatoryRepository,
             DocumentRepository documentRepository,
+            DocumentVersionRepository documentVersionRepository,
             SignatureProcessRepository signatureProcessRepository,
             @Value("${document.storage.path}") String documentStoragePath) {
         this.keyManagerService = keyManagerService;
@@ -65,6 +66,7 @@ public class SignDocumentService implements ISignDocumentService {
         this.signatoryKeyRepository = signatoryKeyRepository;
         this.signatoryRepository = signatoryRepository;
         this.documentRepository = documentRepository;
+        this.documentVersionRepository = documentVersionRepository;
         this.signatureProcessRepository = signatureProcessRepository;
         this.documentStoragePath = Paths.get(documentStoragePath).toAbsolutePath().normalize();
     }
@@ -74,12 +76,12 @@ public class SignDocumentService implements ISignDocumentService {
     public SignDocumentResponse signPdfDocument(Long documentId, Long signatoryId, SignDocumentRequest request)
             throws SignDocumentException {
 
-        Document document = documentRepository.findById(documentId)
+        Document originalDocument = documentRepository.findById(documentId)
                 .orElseThrow(() -> new SignDocumentException("Document not found with ID: " + documentId));
 
-        SignatureProcess signatureProcess = signatureProcessRepository.findById(document.getSignatureProcess().getId())
+        SignatureProcess signatureProcess = signatureProcessRepository.findById(originalDocument.getSignatureProcess().getId())
                 .orElseThrow(() -> new SignDocumentException(
-                        "Signature process not found with ID: " + document.getSignatureProcess().getId()));
+                        "Signature process not found with ID: " + originalDocument.getSignatureProcess().getId()));
 
         Signatory signatory = signatoryRepository.findById(signatoryId)
                 .orElseThrow(() -> new SignDocumentException("Signatory not found with ID: " + signatoryId));
@@ -119,8 +121,17 @@ public class SignDocumentService implements ISignDocumentService {
                     "Signatory with ID: " + signatoryId + " is not the current signatory for the sequential signature process with ID: " + signatureProcess.getId());
         }
 
+        Optional<DocumentVersion> currentDocumentVersionOptional = getCurrentDocumentVersion(originalDocument);
 
-        String signedDocumentPath = signPDF(document, signatory, request.getPrivateKeyBase64());
+        DocumentVersion newDocumentVersion = null;
+        if (currentDocumentVersionOptional.isEmpty()) {
+            newDocumentVersion = signPDF(originalDocument, originalDocument.getStoragePath(), 1, signatory, request.getPrivateKeyBase64());
+            documentVersionRepository.save(newDocumentVersion);
+        } else {
+            DocumentVersion currentDocumentVersion = currentDocumentVersionOptional.get();
+            newDocumentVersion = signPDF(originalDocument, currentDocumentVersion.getStoragePath(), currentDocumentVersion.getVersionNumber() + 1, signatory, request.getPrivateKeyBase64());
+            documentVersionRepository.save(newDocumentVersion);
+        }
 
         updateSignatory(signatory);
 
@@ -128,10 +139,17 @@ public class SignDocumentService implements ISignDocumentService {
             signatureProcess.setStatus(SignatureProcessStatusEnum.COMPLETED);
             signatureProcess.setStatusUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
             signatureProcessRepository.save(signatureProcess);
+        } else if (SignatureProcessStatusEnum.PENDING.equals(signatureProcess.getStatus())) {
+            signatureProcess.setStatus(SignatureProcessStatusEnum.IN_PROGRESS);
+            signatureProcess.setStatusUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
+            signatureProcessRepository.save(signatureProcess);
         }
 
+        originalDocument.getDocumentVersions().add(newDocumentVersion);
+        documentRepository.save(originalDocument);
+
         return SignDocumentResponse.builder()
-                .signedDocumentPath(signedDocumentPath)
+                .signedDocumentPath(newDocumentVersion.getStoragePath())
                 .build();
     }
 
@@ -189,7 +207,18 @@ public class SignDocumentService implements ISignDocumentService {
                 .allMatch(signatory -> SignatoryStatusEnum.SIGNED.equals(signatory.getSignStatus()));
     }
 
-    private String signPDF(Document document, Signatory signatory, String encodedPrivateKey)
+    /**
+     * Signs the given PDF document with the provided private key and returns the new document version.
+     * @param document the document to be signed
+     * @param storePath the path where the original document is stored
+     * @param versionNumber the version number for the new signed document
+     * @param signatory the signatory performing the signature
+     * @param encodedPrivateKey the Base64-encoded private key of the signatory
+     * @return the new document version after signing
+     * @throws SignDocumentException if an error occurs during the signing process
+     * @throws KeyManagerException if an error occurs while handling the keys
+     */
+    private DocumentVersion signPDF(Document document, String storePath, Integer versionNumber, Signatory signatory, String encodedPrivateKey)
             throws SignDocumentException, KeyManagerException {
         
                 try {
@@ -203,8 +232,7 @@ public class SignDocumentService implements ISignDocumentService {
                 throw new SignDocumentException("Private key does not match the certificate's public key");
             }
 
-            Path originalPath = Paths.get(
-                    document.getStoragePath());
+            Path originalPath = Paths.get(storePath);
 
             byte[] originalPdf = Files.readAllBytes(originalPath);
 
@@ -213,20 +241,41 @@ public class SignDocumentService implements ISignDocumentService {
             Files.createDirectories(documentStoragePath);
 
             Path outputPath = documentStoragePath.resolve(
-                    document.getFileName() + "-signed.pdf");
+                    document.getFileName() + "-signed-V" + versionNumber);
 
             Files.write(outputPath, signedPdf, StandardOpenOption.CREATE_NEW);
 
-            return outputPath.toString();
+            return DocumentVersion.builder()
+            .document(document)
+            .versionNumber(versionNumber)
+            .storagePath(outputPath.toString())
+            .hash(signatureJCAService.calculateHash(signedPdf))
+            .creationDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .build();
 
         } catch (IOException e) {
             throw new SignDocumentException("Error signing PDF document", e);
         }
     }
 
+    /**
+     * Updates the status and sign date of the given signatory.
+     * @param signatory the signatory to update
+     */
     private void updateSignatory(Signatory signatory) {
         signatory.setSignStatus(SignatoryStatusEnum.SIGNED);
         signatory.setSignDate(LocalDateTime.now(ZoneId.systemDefault()));
         signatoryRepository.save(signatory);
+    }
+
+    /**
+     * Retrieves the current (latest) version of the given document, if it exists.
+     * @param document the document for which to retrieve the current version
+     * @return an Optional containing the current document version, or empty if no versions exist
+     */
+    private Optional<DocumentVersion> getCurrentDocumentVersion(Document document) {
+        return documentVersionRepository.findByDocumentIdOrderByVersionNumberDesc(document.getId())
+                .stream()
+                .findFirst();
     }
 }

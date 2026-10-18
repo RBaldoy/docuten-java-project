@@ -2,9 +2,12 @@ package com.docuten.project.service.impl;
 
 import com.docuten.project.service.ISignatureJCAService;
 import com.docuten.project.exception.SignatureJCAException;
+import com.docuten.project.exception.SignatureProcessException;
+
 import jakarta.transaction.Transactional;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +28,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -38,6 +42,7 @@ import org.springframework.stereotype.Service;
 public class SignatureJCAService implements ISignatureJCAService {
 
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+    private static final String HASH_ALGORITHM = "SHA-256";
 
     @Override
     @Transactional
@@ -71,6 +76,18 @@ public class SignatureJCAService implements ISignatureJCAService {
             throw new SignatureJCAException("Invalid public key", e);
         } catch (SignatureException e) {
             throw new SignatureJCAException("Error verifying document", e);
+        }
+    }
+
+    @Override
+    public String calculateHash(byte[] data) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+            byte[] hashBytes = digest.digest(data);
+
+            return Base64.getEncoder().encodeToString(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new SignatureJCAException("Error al calcular el hash del documento", e);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.docuten.project.service;
 
-import com.docuten.project.model.dto.DocumentDetailsResponseDTO;
+import com.docuten.project.model.dto.DocumentDetailsResponse;
 import com.docuten.project.exception.DocumentDetailsException;
 
 /**
@@ -14,6 +14,6 @@ public interface IDocumentDetailsService {
      * @return the details of the document as a DocumentDetailsResponseDTO
      * @throws DocumentDetailsException if there is an error retrieving the document details
      */
-    DocumentDetailsResponseDTO getDocumentDetails(Long documentId) throws DocumentDetailsException;
+    DocumentDetailsResponse getDocumentDetails(Long documentId) throws DocumentDetailsException;
 
 }

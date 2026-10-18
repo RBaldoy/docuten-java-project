@@ -32,4 +32,11 @@ public interface ISignatureJCAService {
      */
     boolean verify(byte[] documentBytes, byte[] signatureBytes, PublicKey publicKey) throws SignatureJCAException;
 
+    /**
+     * Calculates the SHA-256 hash of the given data.
+     *
+     * @param data the data to hash
+     * @return the Base64-encoded hash
+     */
+    String calculateHash(byte[] data);
 }

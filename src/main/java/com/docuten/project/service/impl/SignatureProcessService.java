@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -26,6 +24,7 @@ import com.docuten.project.model.dto.SignerDTO;
 import com.docuten.project.model.enums.SignatoryStatusEnum;
 import com.docuten.project.model.enums.SignatureProcessStatusEnum;
 import com.docuten.project.repository.SignatureProcessRepository;
+import com.docuten.project.service.ISignatureJCAService;
 import com.docuten.project.service.ISignatureProcessService;
 import com.docuten.project.service.constants.Constants;
 import com.docuten.project.service.mapper.SignatureProcessMapper;
@@ -33,13 +32,16 @@ import com.docuten.project.service.mapper.SignatureProcessMapper;
 @Service
 public class SignatureProcessService implements ISignatureProcessService {
 
+    private final ISignatureJCAService signatureJCAService;
     private final SignatureProcessMapper signatureProcessMapper;
     private final SignatureProcessRepository signatureProcessRepository;
     private final Path documentStoragePath;
 
-    public SignatureProcessService(SignatureProcessMapper signatureProcessMapper,
+    public SignatureProcessService(ISignatureJCAService signatureJCAService,
+            SignatureProcessMapper signatureProcessMapper,
             SignatureProcessRepository signatureProcessRepository,
             @Value("${document.storage.path}") String documentStoragePath) {
+        this.signatureJCAService = signatureJCAService;
         this.signatureProcessMapper = signatureProcessMapper;
         this.signatureProcessRepository = signatureProcessRepository;
         this.documentStoragePath = Paths.get(documentStoragePath).toAbsolutePath().normalize();
@@ -80,7 +82,7 @@ public class SignatureProcessService implements ISignatureProcessService {
         DocumentDTO documentDTO = DocumentDTO.builder()
                 .fileName(request.getFileName())
                 .storagePath(documentPath.toString())
-                .hash(calculateHash(decodedPDF))
+                .hash(signatureJCAService.calculateHash(decodedPDF))
                 .size(decodedPDF.length)
                 .creationDate(LocalDateTime.now(ZoneId.systemDefault()))
                 .signatureProcess(signatureProcessDTO)
@@ -136,23 +138,6 @@ public class SignatureProcessService implements ISignatureProcessService {
             return Files.write(filePath, document, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
         } catch (IOException e) {
             throw new SignatureProcessException("Error al almacenar el documento", e);
-        }
-    }
-
-    /**
-     * Calculates the SHA-256 hash of the given data.
-     *
-     * @param data the data to hash
-     * @return the Base64-encoded hash
-     */
-    private String calculateHash(byte[] data) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(data);
-
-            return Base64.getEncoder().encodeToString(hashBytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignatureProcessException("Error al calcular el hash del documento", e);
         }
     }
 

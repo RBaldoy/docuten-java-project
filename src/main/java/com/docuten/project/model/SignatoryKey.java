@@ -16,22 +16,22 @@ import jakarta.persistence.GenerationType;
  * SignatoryKey
  */
 @Entity
-@Table(name = "signatory_key")
+@Table (name = "signatory_key")
 @Getter
 @Setter
 public class SignatoryKey {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column (nullable = false, columnDefinition = "TEXT")
     private String publicKeyBase64;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column (nullable = false, columnDefinition = "TEXT")
     private String privateKeyBase64;
     
-    @Column(columnDefinition = "TEXT")
+    @Column (columnDefinition = "TEXT")
     private String certificateBase64;
     
     @OneToOne (optional = false)

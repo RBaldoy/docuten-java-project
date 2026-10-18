@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import com.docuten.project.service.IDocumentDetailsService;
-import com.docuten.project.model.dto.DocumentDetailsResponseDTO;
+import com.docuten.project.model.dto.DocumentDetailsResponse;
 import com.docuten.project.model.dto.DocumentDetailsSignatoryDTO;
 import com.docuten.project.exception.DocumentDetailsException;
 import com.docuten.project.model.Document;
@@ -22,7 +22,7 @@ public class DocumentDetailsService implements IDocumentDetailsService {
     }
 
     @Override
-    public DocumentDetailsResponseDTO getDocumentDetails(Long documentId) throws DocumentDetailsException {
+    public DocumentDetailsResponse getDocumentDetails(Long documentId) throws DocumentDetailsException {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new DocumentDetailsException("Document not found"));
         SignatureProcess signatureProcess = document.getSignatureProcess();
@@ -36,7 +36,7 @@ public class DocumentDetailsService implements IDocumentDetailsService {
                 .build())
                 .toList();
 
-        return DocumentDetailsResponseDTO.builder()
+        return DocumentDetailsResponse.builder()
                 .id(document.getId())
                 .fileName(document.getFileName())
                 .hash(document.getHash())
